@@ -36,7 +36,7 @@ public final class Main extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new PlayerChatEvents(), this);
         if (!getConfig().getBoolean("Content.Allow.JoinMessage"))
             getServer().getPluginManager().registerEvents(new PlayerJoinEvents(this), this);
-        if (!getConfig().getBoolean("Content.Allow.DeathMessage"))
+        if (!getConfig().getBoolean("Content.Allow.DeathEvents"))
             getServer().getPluginManager().registerEvents(new PlayerDeathEvents(this), this);
         if (!getConfig().getBoolean("Content.Allow.UseSignBook"))
             getServer().getPluginManager().registerEvents(new PlayerSignBookEvents(this), this);
@@ -103,7 +103,7 @@ public final class Main extends JavaPlugin {
 
         getConfig().addDefault("Content.Allow.ChatCommand", false);
         getConfig().addDefault("Content.Allow.JoinMessage", false);
-        getConfig().addDefault("Content.Allow.DeathMessage", false);
+        getConfig().addDefault("Content.Allow.DeathEvents", false);
         getConfig().addDefault("Content.Allow.UseSignBook", false);
         getConfig().addDefault("Content.Allow.PacketManipulation", true);
         getConfig().addDefault("Content.ChatRange", 10);
