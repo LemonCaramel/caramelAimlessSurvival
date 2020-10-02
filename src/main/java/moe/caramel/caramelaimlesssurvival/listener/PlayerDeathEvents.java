@@ -17,7 +17,7 @@ public class PlayerDeathEvents implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerDeathEvent event) {
-        event.setDeathMessage("§c누군가가 죽었다.");
+        event.setDeathMessage(plugin.getConfig().getString("Server.DeathMessage"));
     }
 
     @EventHandler

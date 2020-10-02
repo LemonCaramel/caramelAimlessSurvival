@@ -75,6 +75,7 @@ public final class Main extends JavaPlugin {
         getConfig().addDefault("Content.Allow.PacketManipulation", true);
         getConfig().addDefault("Content.ChatRange", 10);
 
+        getConfig().addDefault("Server.DeathMessage", "§c누군가가 죽었다.");
         getConfig().addDefault("Server.MOTD", "Aimless Survival");
 
         saveConfig();
