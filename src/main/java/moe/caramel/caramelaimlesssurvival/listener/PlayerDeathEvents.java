@@ -23,10 +23,9 @@ public class PlayerDeathEvents implements Listener {
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
+        if (event.isBedSpawn() || event.isAnchorSpawn()) return;
 
-        if (player.getBedSpawnLocation() == null) {
-            int range = (plugin.getConfig().getInt("WorldBorder.WorldSize") / 2) - 100;
-            event.setRespawnLocation(plugin.randomLocation(player, range));
-        }
+        event.setRespawnLocation(plugin.randomLocation(player));
     }
+
 }

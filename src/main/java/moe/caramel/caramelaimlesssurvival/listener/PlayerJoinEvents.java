@@ -22,8 +22,8 @@ public class PlayerJoinEvents implements Listener {
         if (player.hasPlayedBefore()) {
             event.setJoinMessage(null);
         } else {
-            int range = (plugin.getConfig().getInt("WorldBorder.WorldSize") / 2) - 100;
-            player.teleport(plugin.randomLocation(player, range));
+            player.teleport(plugin.randomLocation(player));
+            player.setCompassTarget(player.getWorld().getSpawnLocation());
             event.setJoinMessage("§e누군가가 처음으로 입장했다.");
         }
     }

@@ -27,11 +27,11 @@ public class PlayerSignBookEvents implements Listener {
             player.sendMessage("§c§l[!] §c세계의 중심에서 " + chatRange + "블록 이내에서만 문자 사용이 가능합니다.");
             BookMeta bookMeta = event.getNewBookMeta();
             if (bookMeta.hasTitle() && bookMeta.getTitle() != null) {
-                bookMeta.setTitle(bookMeta.getTitle().replaceAll("[^0-9]", ""));
+                bookMeta.setTitle(removeLang(bookMeta.getTitle()));
             }
 
             for (int page = 1; page <= bookMeta.getPageCount(); page++) {
-                bookMeta.setPage(page, bookMeta.getPage(page).replaceAll("[^0-9]", ""));
+                bookMeta.setPage(page, removeLang(bookMeta.getPage(page)));
             }
 
             event.setNewBookMeta(bookMeta);
@@ -50,10 +50,14 @@ public class PlayerSignBookEvents implements Listener {
             if (event.getLines().length >= 1) {
                 for (int line = 0; line < event.getLines().length; line++) {
                     if (event.getLine(line) != null)
-                        event.setLine(line, event.getLine(line).replaceAll("[^0-9]", ""));
+                        event.setLine(line, removeLang(event.getLine(line)));
                 }
             }
         }
+    }
+
+    public String removeLang(String text) {
+        return text.replaceAll("([a-zA-Z])|([ㄱ-힣])", "?");
     }
 
 }

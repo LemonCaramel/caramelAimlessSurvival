@@ -1,37 +1,21 @@
 package moe.caramel.caramelaimlesssurvival;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.comphenix.protocol.wrappers.PlayerInfoData;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import moe.caramel.caramelaimlesssurvival.listener.*;
+import moe.caramel.caramelaimlesssurvival.scheduler.PlayerList;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.NumberConversions;
 
-import java.util.ArrayList;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Random;
 import java.util.logging.Level;
 
 public final class Main extends JavaPlugin {
 
     public String tabString;
-    public ProtocolManager protocolManager;
-    public int playerRenderSize;
 
     @Override
     public void onEnable() {
-
-        protocolManager = ProtocolLibrary.getProtocolManager();
-        playerRenderSize = Bukkit.getServer().spigot().getSpigotConfig().getInt("world-settings.default.entity-tracking-range.players") + 15;
-
         if (!getConfig().getBoolean("Content.Allow.ChatCommand"))
             getServer().getPluginManager().registerEvents(new PlayerChatEvents(), this);
         if (!getConfig().getBoolean("Content.Allow.JoinMessage"))
@@ -42,27 +26,7 @@ public final class Main extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new PlayerSignBookEvents(this), this);
         if (getConfig().getBoolean("Content.Allow.PacketManipulation")) {
             getServer().getPluginManager().registerEvents(new PacketManipulationEvents(this), this);
-            protocolManager.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Server.PLAYER_INFO) {
-                @Override
-                public void onPacketSending(PacketEvent event) {
-                    PacketContainer packet = event.getPacket();
-                    ArrayList<PlayerInfoData> playerInfoData = new ArrayList<>();
-                    Player player = event.getPlayer();
-                    Location playerLoc = player.getLocation();
-                    if (packet.getPlayerInfoAction().read(0) == EnumWrappers.PlayerInfoAction.ADD_PLAYER) {
-                        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                            Location onlineLoc = onlinePlayer.getLocation();
-                            if (getDistance(playerLoc.getX(), playerLoc.getZ(), onlineLoc.getX(), onlineLoc.getZ()) <= playerRenderSize) {
-                                playerInfoData.add(new PlayerInfoData(WrappedGameProfile.fromPlayer(onlinePlayer), 0,
-                                        EnumWrappers.NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(onlinePlayer.getName())));
-                            }
-                        }
-
-                        packet.getPlayerInfoDataLists().write(0, playerInfoData);
-                        event.setPacket(packet);
-                    }
-                }
-            });
+            getServer().getScheduler().runTaskTimer(this, new PlayerList(), 0L, 1L);
         }
 
         getLogger().log(Level.INFO, "Classes Load Success.");
@@ -81,12 +45,15 @@ public final class Main extends JavaPlugin {
         getLogger().log(Level.INFO, "TabList String Load Success.");
 
         getServer().setSpawnRadius(1);
-        for (World worlds : getServer().getWorlds()) {
-            worlds.setGameRule(GameRule.REDUCED_DEBUG_INFO, getConfig().getBoolean("GameRule.ReduceDebugInfo"));
-            worlds.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, getConfig().getBoolean("GameRule.AnnounceAdvancements"));
-            WorldBorder worldBorder = worlds.getWorldBorder();
+
+        for (World world : getServer().getWorlds()) {
+            WorldBorder worldBorder = world.getWorldBorder();
             worldBorder.setCenter(0, 0);
             worldBorder.setSize(getConfig().getDouble("WorldBorder.WorldSize"));
+
+            world.setSpawnLocation(world.getHighestBlockAt(0, 0).getLocation());
+            world.setGameRule(GameRule.REDUCED_DEBUG_INFO, getConfig().getBoolean("GameRule.ReduceDebugInfo"));
+            world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, getConfig().getBoolean("GameRule.AnnounceAdvancements"));
         }
         getLogger().log(Level.INFO, "World Setting Success.");
 
@@ -123,15 +90,21 @@ public final class Main extends JavaPlugin {
         return Math.sqrt(Math.pow(Math.abs(x2 - x1), 2) + Math.pow(Math.abs(z2 - z1), 2));
     }
 
-    public Location randomLocation(Player player, int range) {
-        int x = randomRange(range), z = randomRange(range);
-        Location _temp = new Location(player.getWorld(), x, 0, z);
-        _temp.setY(player.getLocation().getWorld().getHighestBlockYAt(_temp));
-        return _temp;
+    public Location randomLocation(Player player) {
+        int hash = player.getName().hashCode();
+        Random random = new Random(hash ^ 0x12345678);
+
+        World world = player.getWorld();
+        WorldBorder border = world.getWorldBorder();
+        double size = border.getSize() / 2.0;
+        double x = getRandom(random, size), z = getRandom(random, size);
+
+        return world.getHighestBlockAt(NumberConversions.floor(x), NumberConversions.floor(z))
+                .getLocation().add(0.5, 1.0, 0.5);
     }
 
-    public int randomRange(int range) {
-        return ThreadLocalRandom.current().nextInt((range * -1), range + 1);
+    private double getRandom(Random random, double size) {
+        return random.nextDouble() * size - size / 2.0;
     }
 
 }
