@@ -104,7 +104,7 @@ public final class Main extends JavaPlugin {
     }
 
     private double getRandom(Random random, double size) {
-        return (random.nextDouble() * size) + 1;
+        return (random.nextDouble() * size) - size;
     }
 
 }
