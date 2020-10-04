@@ -96,8 +96,7 @@ public final class Main extends JavaPlugin {
         Random random = new Random(hash ^ 0x12345678);
 
         World world = player.getWorld();
-        WorldBorder border = world.getWorldBorder();
-        double size = border.getSize() / 2.0;
+        double size = (getConfig().getDouble("WorldBorder.WorldSize") / 2.0) - 100;
         double x = getRandom(random, size), z = getRandom(random, size);
 
         return world.getHighestBlockAt(NumberConversions.floor(x), NumberConversions.floor(z))
@@ -105,7 +104,7 @@ public final class Main extends JavaPlugin {
     }
 
     private double getRandom(Random random, double size) {
-        return random.nextDouble() * size - size / 2.0;
+        return (random.nextDouble() * size) + 1;
     }
 
 }
