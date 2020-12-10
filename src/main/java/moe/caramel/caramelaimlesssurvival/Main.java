@@ -95,7 +95,7 @@ public final class Main extends JavaPlugin {
         int hash = player.getName().hashCode();
         Random random = new Random(hash ^ 0x12345678);
 
-        World world = player.getWorld();
+        World world = getServer().getWorlds().get(0);
         double size = (getConfig().getDouble("WorldBorder.WorldSize") / 2.0) - 100;
         double x = getRandom(random, size), z = getRandom(random, size);
 
