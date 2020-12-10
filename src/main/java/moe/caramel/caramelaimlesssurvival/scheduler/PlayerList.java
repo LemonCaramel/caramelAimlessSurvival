@@ -32,6 +32,7 @@ public class PlayerList implements Runnable {
         WrapperPlayServerPlayerInfo packet = new WrapperPlayServerPlayerInfo();
         List<PlayerInfoData> playerInfoData = new ArrayList<>();
 
+        int i = 0;
         for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
             WrappedGameProfile profile =
                     (offlinePlayer instanceof Player) ? WrappedGameProfile.fromPlayer((Player) offlinePlayer) :
@@ -40,6 +41,8 @@ public class PlayerList implements Runnable {
             playerInfoData.add(
                     new PlayerInfoData(profile, 0, EnumWrappers.NativeGameMode.NOT_SET,
                             WrappedChatComponent.fromText(offlinePlayer.getName())));
+
+            if (++i > 100) break;
         }
 
         packet.setAction(EnumWrappers.PlayerInfoAction.ADD_PLAYER);
