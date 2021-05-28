@@ -17,7 +17,7 @@ public class PlayerDeathEvents implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
-        event.setDeathMessage(plugin.getConfig().getString("Server.DeathMessage"));
+        event.setDeathMessage(this.plugin.getConfig().getString("Server.DeathMessage"));
         System.out.println(event.getEntity().getName() + "님께서 사망하셨습니다.");
     }
 
@@ -26,7 +26,7 @@ public class PlayerDeathEvents implements Listener {
         Player player = event.getPlayer();
         if (event.isBedSpawn() || event.isAnchorSpawn()) return;
 
-        event.setRespawnLocation(plugin.randomLocation(player));
+        event.setRespawnLocation(this.plugin.randomLocation(player));
     }
 
 }

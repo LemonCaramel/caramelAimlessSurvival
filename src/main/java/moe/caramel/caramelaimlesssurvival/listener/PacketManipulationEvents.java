@@ -11,7 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.*;
+import java.util.Calendar;
 
 public class PacketManipulationEvents implements Listener {
 
@@ -28,13 +28,13 @@ public class PacketManipulationEvents implements Listener {
         event.getPlayerSample().clear();
         event.setNumPlayers(c.get(Calendar.YEAR) * 10000 + (c.get(Calendar.MONTH) + 1) * 100 + c.get(Calendar.DAY_OF_MONTH));
         event.setMaxPlayers(c.get(Calendar.HOUR) * 10000 + c.get(Calendar.MINUTE) * 100 + c.get(Calendar.SECOND));
-        event.setMotd(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("Server.MOTD")));
+        event.setMotd(ChatColor.translateAlternateColorCodes('&', this.plugin.getConfig().getString("Server.MOTD")));
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         PlayerList.update();
-        event.getPlayer().setPlayerListHeader(plugin.tabString);
+        event.getPlayer().setPlayerListHeader(this.plugin.tabString);
     }
 
     @EventHandler

@@ -22,8 +22,8 @@ public class PlayerSignBookEvents implements Listener {
         Player player = event.getPlayer();
         Location loc = player.getLocation();
 
-        double chatRange = plugin.getConfig().getDouble("Content.ChatRange");
-        if (plugin.getDistance(0, 0, loc.getX(), loc.getZ()) > chatRange) {
+        double chatRange = this.plugin.getConfig().getDouble("Content.ChatRange");
+        if (this.plugin.getDistance(0, 0, loc.getX(), loc.getZ()) > chatRange) {
             player.sendMessage("§c§l[!] §c세계의 중심에서 " + chatRange + "블록 이내에서만 문자 사용이 가능합니다.");
             BookMeta bookMeta = event.getNewBookMeta();
             if (bookMeta.hasTitle() && bookMeta.getTitle() != null) {
@@ -31,7 +31,7 @@ public class PlayerSignBookEvents implements Listener {
             }
 
             for (int page = 1; page <= bookMeta.getPageCount(); page++) {
-                bookMeta.setPage(page, removeLang(bookMeta.getPage(page)));
+                bookMeta.setPage(page, this.removeLang(bookMeta.getPage(page)));
             }
 
             event.setNewBookMeta(bookMeta);
@@ -43,20 +43,20 @@ public class PlayerSignBookEvents implements Listener {
         Player player = event.getPlayer();
         Location loc = event.getBlock().getLocation();
 
-        double chatRange = plugin.getConfig().getDouble("Content.ChatRange");
-        if (plugin.getDistance(0, 0, loc.getX(), loc.getZ()) > chatRange) {
+        double chatRange = this.plugin.getConfig().getDouble("Content.ChatRange");
+        if (this.plugin.getDistance(0, 0, loc.getX(), loc.getZ()) > chatRange) {
             player.sendMessage("§c§l[!] §c세계의 중심에서 " + chatRange + "블록 이내에서만 문자 사용이 가능합니다.");
 
             if (event.getLines().length >= 1) {
                 for (int line = 0; line < event.getLines().length; line++) {
                     if (event.getLine(line) != null)
-                        event.setLine(line, removeLang(event.getLine(line)));
+                        event.setLine(line, this.removeLang(event.getLine(line)));
                 }
             }
         }
     }
 
-    public String removeLang(String text) {
+    private String removeLang(String text) {
         return text.replaceAll("([a-zA-Z])|([ㄱ-힣])", "?");
     }
 

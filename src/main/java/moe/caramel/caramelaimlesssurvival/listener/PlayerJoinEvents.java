@@ -22,7 +22,7 @@ public class PlayerJoinEvents implements Listener {
         if (player.hasPlayedBefore()) {
             event.setJoinMessage(null);
         } else {
-            player.teleport(plugin.randomLocation(player));
+            player.teleport(this.plugin.randomLocation(player));
             player.setCompassTarget(player.getWorld().getSpawnLocation());
             event.setJoinMessage("§e누군가가 처음으로 입장했다.");
         }

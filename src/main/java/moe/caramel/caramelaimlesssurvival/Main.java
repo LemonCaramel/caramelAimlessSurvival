@@ -2,7 +2,10 @@ package moe.caramel.caramelaimlesssurvival;
 
 import moe.caramel.caramelaimlesssurvival.listener.*;
 import moe.caramel.caramelaimlesssurvival.scheduler.PlayerList;
-import org.bukkit.*;
+import org.bukkit.GameRule;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.WorldBorder;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.NumberConversions;
@@ -10,30 +13,33 @@ import org.bukkit.util.NumberConversions;
 import java.util.Random;
 import java.util.logging.Level;
 
+/**
+ *
+ * 유지보수하기 어렵게 코딩하는 방법: 평생 개발자로 먹고 살 수 있다
+ *
+ * @author LemonCaramel
+ * @since 2020
+ */
 public final class Main extends JavaPlugin {
 
     public String tabString;
 
     @Override
     public void onEnable() {
-        if (!getConfig().getBoolean("Content.Allow.ChatCommand"))
-            getServer().getPluginManager().registerEvents(new PlayerChatEvents(), this);
-        if (!getConfig().getBoolean("Content.Allow.JoinMessage"))
-            getServer().getPluginManager().registerEvents(new PlayerJoinEvents(this), this);
-        if (!getConfig().getBoolean("Content.Allow.DeathEvents"))
-            getServer().getPluginManager().registerEvents(new PlayerDeathEvents(this), this);
-        if (!getConfig().getBoolean("Content.Allow.UseSignBook"))
-            getServer().getPluginManager().registerEvents(new PlayerSignBookEvents(this), this);
-        if (getConfig().getBoolean("Content.Allow.PacketManipulation")) {
-            getServer().getPluginManager().registerEvents(new PacketManipulationEvents(this), this);
-            getServer().getScheduler().runTaskTimer(this, new PlayerList(), 0L, 1L);
+        if (!this.getConfig().getBoolean("Content.Allow.ChatCommand"))
+            this.getServer().getPluginManager().registerEvents(new PlayerChatEvents(), this);
+        if (!this.getConfig().getBoolean("Content.Allow.JoinMessage"))
+            this.getServer().getPluginManager().registerEvents(new PlayerJoinEvents(this), this);
+        if (!this.getConfig().getBoolean("Content.Allow.DeathEvents"))
+            this.getServer().getPluginManager().registerEvents(new PlayerDeathEvents(this), this);
+        if (!this.getConfig().getBoolean("Content.Allow.UseSignBook"))
+            this.getServer().getPluginManager().registerEvents(new PlayerSignBookEvents(this), this);
+        if (this.getConfig().getBoolean("Content.Allow.PacketManipulation")) {
+            this.getServer().getPluginManager().registerEvents(new PacketManipulationEvents(this), this);
+            this.getServer().getScheduler().runTaskTimer(this, new PlayerList(), 0L, 1L);
         }
 
-        getLogger().log(Level.INFO, "Classes Load Success.");
-
-        configInit();
-        getLogger().log(Level.INFO, "Config Load Success.");
-
+        this.configInit();
         StringBuilder tabListString = new StringBuilder();
         for (int i = 0; i < 200; i++) {
             tabListString.append("\n");
@@ -42,9 +48,8 @@ public final class Main extends JavaPlugin {
             }
         }
         tabString = tabListString.toString();
-        getLogger().log(Level.INFO, "TabList String Load Success.");
 
-        getServer().setSpawnRadius(1);
+        this.getServer().setSpawnRadius(1);
 
         for (World world : getServer().getWorlds()) {
             WorldBorder worldBorder = world.getWorldBorder();
@@ -55,35 +60,28 @@ public final class Main extends JavaPlugin {
             world.setGameRule(GameRule.REDUCED_DEBUG_INFO, getConfig().getBoolean("GameRule.ReduceDebugInfo"));
             world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, getConfig().getBoolean("GameRule.AnnounceAdvancements"));
         }
-        getLogger().log(Level.INFO, "World Setting Success.");
-
-        getLogger().log(Level.INFO, "Starting Plugin.");
+        this.getLogger().log(Level.INFO, "월드 설정이 완료되었습니다.");
     }
 
     public void configInit() {
-        getConfig().options().copyDefaults(true);
+        this.getConfig().options().copyDefaults(true);
 
-        getConfig().addDefault("WorldBorder.WorldSize", 5000);
+        this.getConfig().addDefault("WorldBorder.WorldSize", 5000);
 
-        getConfig().addDefault("GameRule.ReduceDebugInfo", true);
-        getConfig().addDefault("GameRule.AnnounceAdvancements", false);
+        this.getConfig().addDefault("GameRule.ReduceDebugInfo", true);
+        this.getConfig().addDefault("GameRule.AnnounceAdvancements", false);
 
-        getConfig().addDefault("Content.Allow.ChatCommand", false);
-        getConfig().addDefault("Content.Allow.JoinMessage", false);
-        getConfig().addDefault("Content.Allow.DeathEvents", false);
-        getConfig().addDefault("Content.Allow.UseSignBook", false);
-        getConfig().addDefault("Content.Allow.PacketManipulation", true);
-        getConfig().addDefault("Content.ChatRange", 10);
+        this.getConfig().addDefault("Content.Allow.ChatCommand", false);
+        this.getConfig().addDefault("Content.Allow.JoinMessage", false);
+        this.getConfig().addDefault("Content.Allow.DeathEvents", false);
+        this.getConfig().addDefault("Content.Allow.UseSignBook", false);
+        this.getConfig().addDefault("Content.Allow.PacketManipulation", true);
+        this.getConfig().addDefault("Content.ChatRange", 10);
 
-        getConfig().addDefault("Server.DeathMessage", "§c누군가가 죽었다.");
-        getConfig().addDefault("Server.MOTD", "Aimless Survival");
+        this.getConfig().addDefault("Server.DeathMessage", "§c누군가가 죽었다.");
+        this.getConfig().addDefault("Server.MOTD", "Aimless Survival");
 
-        saveConfig();
-    }
-
-    @Override
-    public void onDisable() {
-        getLogger().log(Level.INFO, "Bye.");
+        this.saveConfig();
     }
 
     /* Utils */
@@ -92,12 +90,11 @@ public final class Main extends JavaPlugin {
     }
 
     public Location randomLocation(Player player) {
-        int hash = player.getName().hashCode();
-        Random random = new Random(hash ^ 0x12345678);
+        Random random = new Random(player.getName().hashCode() ^ 0x12345678);
 
-        World world = getServer().getWorlds().get(0);
-        double size = (getConfig().getDouble("WorldBorder.WorldSize") / 2.0) - 100;
-        double x = getRandom(random, size), z = getRandom(random, size);
+        World world = this.getServer().getWorlds().get(0);
+        double size = (this.getConfig().getDouble("WorldBorder.WorldSize") / 2.0) - 100;
+        double x = this.getRandom(random, size), z = this.getRandom(random, size);
 
         return world.getHighestBlockAt(NumberConversions.floor(x), NumberConversions.floor(z))
                 .getLocation().add(0.5, 1.0, 0.5);
